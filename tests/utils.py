@@ -7,8 +7,7 @@ import difflib
 import os
 import unittest
 
-import six
-
+from sqlparse import compat
 import sqlparse.utils
 
 NL = '\n'
@@ -32,15 +31,15 @@ class TestCaseBase(unittest.TestCase):
     def ndiffAssertEqual(self, first, second):
         """Like failUnlessEqual except use ndiff for readable output."""
         if first != second:
-            sfirst = six.text_type(first)
-            ssecond = six.text_type(second)
+            sfirst = compat.text_type(first)
+            ssecond = compat.text_type(second)
             # Using the built-in .splitlines() method here will cause incorrect
             # results when splitting statements that have quoted CR/CR+LF
             # characters.
             sfirst = sqlparse.utils.split_unquoted_newlines(sfirst)
             ssecond = sqlparse.utils.split_unquoted_newlines(ssecond)
             diff = difflib.ndiff(sfirst, ssecond)
-            fp = six.StringIO()
+            fp = compat.StringIO()
             fp.write(NL)
             fp.write(NL.join(diff))
             print(fp.getvalue())

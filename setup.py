@@ -106,7 +106,4 @@ setup(
         'Topic :: Software Development'
     ],
     scripts=['bin/sqlformat'],
-    install_requires=[
-        'six',
-    ],
 )

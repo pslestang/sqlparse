@@ -402,6 +402,5 @@ def group(tlist):
             group_if,
             group_for,
             group_foreach,
-            group_begin,
-            ]:
+            group_begin]:
         func(tlist)

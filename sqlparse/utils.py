@@ -96,6 +96,7 @@ SPLIT_REGEX = re.compile(r"""
 
 LINE_MATCH = re.compile(r'(\r\n|\r|\n)')
 
+
 def split_unquoted_newlines(text):
     """Split a string on all unquoted newlines.
 

@@ -2,11 +2,10 @@
 
 import sys
 
-import six
-
 from tests.utils import TestCaseBase, load_file
 
 import sqlparse
+from sqlparse import compat
 from sqlparse import sql
 from sqlparse import tokens as T
 
@@ -166,7 +165,7 @@ ALTER TABLE..... ;"""
 def test_comment_encoding_when_reindent():
     # There was an UnicodeEncodeError in the reindent filter that
     # casted every comment followed by a keyword to str.
-    sql = six.text_type(six.u(
+    sql = compat.text_type(compat.u(
         'select foo -- Comment containing Ümläuts\nfrom bar'))
     formatted = sqlparse.format(sql, reindent=True)
     assert formatted == sql
@@ -197,7 +196,7 @@ def test_format_accepts_encoding():  # issue20
     sql = load_file('test_cp1251.sql', 'cp1251')
     formatted = sqlparse.format(sql, reindent=True, encoding='cp1251')
     if sys.version_info < (3,):
-        tformatted = six.text_type(
+        tformatted = compat.text_type(
             'insert into foo\nvalues (1); -- Песня про надежду\n',
             encoding='utf-8')
     else:

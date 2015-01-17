@@ -3,11 +3,10 @@
 import types
 import unittest
 
-import six
-
 import pytest
 
 import sqlparse
+from sqlparse import compat
 from sqlparse import lexer
 from sqlparse import sql
 from sqlparse.tokens import *  # noqa
@@ -135,7 +134,7 @@ class TestTokenList(unittest.TestCase):
 class TestStream(unittest.TestCase):
 
     def test_simple(self):
-        stream = six.StringIO("SELECT 1; SELECT 2;")
+        stream = compat.StringIO("SELECT 1; SELECT 2;")
         lex = lexer.Lexer()
 
         tokens = lex.get_tokens(stream)
@@ -152,7 +151,7 @@ class TestStream(unittest.TestCase):
         self.assertEqual(len(tokens), 9)
 
     def test_error(self):
-        stream = six.StringIO("FOOBAR{")
+        stream = compat.StringIO("FOOBAR{")
 
         lex = lexer.Lexer()
         lex.bufsize = 4

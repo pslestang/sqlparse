@@ -15,10 +15,9 @@
 import re
 import sys
 
-import six
-from six import StringIO
-
+from sqlparse import compat
 from sqlparse import tokens
+from sqlparse.compat import StringIO
 from sqlparse.keywords import KEYWORDS, KEYWORDS_COMMON
 
 
@@ -132,7 +131,7 @@ class LexerMeta(type):
         return type.__call__(cls, *args, **kwds)
 
 
-class Lexer(six.with_metaclass(LexerMeta)):
+class Lexer(compat.with_metaclass(LexerMeta)):
 
     encoding = 'utf-8'
     stripall = False
@@ -174,7 +173,8 @@ class Lexer(six.with_metaclass(LexerMeta)):
             # not a real string literal in ANSI SQL:
             (r'(""|".*?[^\\]")', tokens.String.Symbol),
             (r'(\[[^\]]+\])', tokens.Name),
-            (r'((LEFT\s+|RIGHT\s+|FULL\s+)?(INNER\s+|OUTER\s+|STRAIGHT\s+)?|(CROSS\s+|NATURAL\s+)?)?JOIN\b', tokens.Keyword),
+            ((r'((LEFT\s+|RIGHT\s+|FULL\s+)?(INNER\s+|OUTER\s+|STRAIGHT\s+)?'
+              r'|(CROSS\s+|NATURAL\s+)?)?JOIN\b'), tokens.Keyword),
             (r'END(\s+IF|\s+LOOP)?\b', tokens.Keyword),
             (r'NOT NULL\b', tokens.Keyword),
             (r'CREATE(\s+OR\s+REPLACE)?\b', tokens.Keyword.DDL),
@@ -207,8 +207,8 @@ class Lexer(six.with_metaclass(LexerMeta)):
         if self.encoding == 'guess':
             try:
                 text = text.decode('utf-8')
-                if text.startswith(six.text_type('\ufeff')):
-                    text = text[len(six.text_type('\ufeff')):]
+                if text.startswith(compat.text_type('\ufeff')):
+                    text = text[len(compat.text_type('\ufeff')):]
             except UnicodeDecodeError:
                 text = text.decode('latin1')
         else:
@@ -230,13 +230,13 @@ class Lexer(six.with_metaclass(LexerMeta)):
         Also preprocess the text, i.e. expand tabs and strip it if
         wanted and applies registered filters.
         """
-        if isinstance(text, six.string_types):
+        if isinstance(text, compat.string_types):
             if self.stripall:
                 text = text.strip()
             elif self.stripnl:
                 text = text.strip('\n')
 
-            if six.PY2 and isinstance(text, six.text_type):
+            if compat.PY2 and isinstance(text, compat.text_type):
                 text = StringIO(text.encode('utf-8'))
                 self.encoding = 'utf-8'
             else:
@@ -309,7 +309,7 @@ class Lexer(six.with_metaclass(LexerMeta)):
                         pos += 1
                         statestack = ['root']
                         statetokens = tokendefs['root']
-                        yield pos, tokens.Text, six.text_type('\n')
+                        yield pos, tokens.Text, compat.text_type('\n')
                         continue
                     yield pos, tokens.Error, text[pos]
                     pos += 1

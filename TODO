@@ -3,7 +3,7 @@ Goals for 0.2.0
 
 X Drop support for Python <= 2.6
 X Remove SQLParserError from top level module.
-X Use six instead of 2to3
+X Don't use 2to3 anymore
 ~ Remove unused code
 ~ Possible deprecation:
   - RightMarginFilter

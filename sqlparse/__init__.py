@@ -8,10 +8,8 @@
 
 __version__ = '0.1.14'
 
-import six
-
-
 # Setup namespace
+from sqlparse import compat
 from sqlparse import engine
 from sqlparse import filters
 from sqlparse import formatter
@@ -66,7 +64,8 @@ def split(sql, encoding=None):
     """
     stack = engine.FilterStack()
     stack.split_statements = True
-    return [six.text_type(stmt).strip() for stmt in stack.run(sql, encoding)]
+    return [compat.text_type(stmt).strip()
+            for stmt in stack.run(sql, encoding)]
 
 
 from sqlparse.engine.filter import StatementFilter
