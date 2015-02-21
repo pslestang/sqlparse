@@ -172,12 +172,14 @@ class Lexer(compat.with_metaclass(LexerMeta)):
             (r"'(''|\\'|[^'])*'", tokens.String.Single),
             # not a real string literal in ANSI SQL:
             (r'(""|".*?[^\\]")', tokens.String.Symbol),
+            (r'(?<=[\w\]])(\[[^\]]*?\])', tokens.Punctuation.ArrayIndex),
             (r'(\[[^\]]+\])', tokens.Name),
             ((r'((LEFT\s+|RIGHT\s+|FULL\s+)?(INNER\s+|OUTER\s+|STRAIGHT\s+)?'
               r'|(CROSS\s+|NATURAL\s+)?)?JOIN\b'), tokens.Keyword),
             (r'END(\s+IF|\s+LOOP)?\b', tokens.Keyword),
             (r'NOT NULL\b', tokens.Keyword),
             (r'CREATE(\s+OR\s+REPLACE)?\b', tokens.Keyword.DDL),
+            (r'DOUBLE\s+PRECISION\b', tokens.Name.Builtin),
             (r'(?<=\.)[^\W\d_]\w*', tokens.Name),
             (r'[^\W\d_]\w*', is_keyword),
             (r'[;:()\[\],\.]', tokens.Punctuation),
@@ -291,7 +293,13 @@ class Lexer(compat.with_metaclass(LexerMeta)):
                                     statestack.pop()
                                 elif state == '#push':
                                     statestack.append(statestack[-1])
-                                else:
+                                elif (
+                                    # Ugly hack - multiline-comments
+                                    # are not stackable
+                                    state != 'multiline-comments'
+                                    or not statestack
+                                    or statestack[-1] != 'multiline-comments'
+                                ):
                                     statestack.append(state)
                         elif isinstance(new_state, int):
                             # pop
