@@ -168,20 +168,20 @@ class Lexer(compat.with_metaclass(LexerMeta)):
             (r'[-]?[0-9]*(\.[0-9]+)?[eE][-]?[0-9]+', tokens.Number.Float),
             (r'[-]?[0-9]*\.[0-9]+', tokens.Number.Float),
             (r'[-]?[0-9]+', tokens.Number.Integer),
-            # TODO: Backslash escapes?
-            (r"'(''|\\'|[^'])*'", tokens.String.Single),
+            (r"'(''|\\\\|\\'|[^'])*'", tokens.String.Single),
             # not a real string literal in ANSI SQL:
             (r'(""|".*?[^\\]")', tokens.String.Symbol),
-            (r'(?<=[\w\]])(\[[^\]]*?\])', tokens.Punctuation.ArrayIndex),
-            (r'(\[[^\]]+\])', tokens.Name),
-            ((r'((LEFT\s+|RIGHT\s+|FULL\s+)?(INNER\s+|OUTER\s+|STRAIGHT\s+)?'
-              r'|(CROSS\s+|NATURAL\s+)?)?JOIN\b'), tokens.Keyword),
+            # sqlite names can be escaped with [square brackets]. left bracket
+            # cannot be preceded by word character or a right bracket --
+            # otherwise it's probably an array index
+            (r'(?<![\w\])])(\[[^\]]+\])', tokens.Name),
+            (r'((LEFT\s+|RIGHT\s+|FULL\s+)?(INNER\s+|OUTER\s+|STRAIGHT\s+)?|(CROSS\s+|NATURAL\s+)?)?JOIN\b', tokens.Keyword),
             (r'END(\s+IF|\s+LOOP)?\b', tokens.Keyword),
             (r'NOT NULL\b', tokens.Keyword),
             (r'CREATE(\s+OR\s+REPLACE)?\b', tokens.Keyword.DDL),
             (r'DOUBLE\s+PRECISION\b', tokens.Name.Builtin),
             (r'(?<=\.)[^\W\d_]\w*', tokens.Name),
-            (r'[^\W\d_]\w*', is_keyword),
+            (r'[^\W\d]\w*', is_keyword),
             (r'[;:()\[\],\.]', tokens.Punctuation),
             (r'[<>=~!]+', tokens.Operator.Comparison),
             (r'[+/@#%^&|`?^-]+', tokens.Operator),
@@ -271,7 +271,6 @@ class Lexer(compat.with_metaclass(LexerMeta)):
             for rexmatch, action, new_state in statetokens:
                 m = rexmatch(text, pos)
                 if m:
-                    # print rex.pattern
                     value = m.group()
                     if value in known_names:
                         yield pos, known_names[value], value

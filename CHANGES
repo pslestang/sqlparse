@@ -6,13 +6,16 @@ Bug Fixes
   notation (issue153, by darikg).
 * Add missing SQL types (issue154, issue155, issue156, by jukebox).
 * Fix parsing of multi-line comments (issue172, by JacekPliszka).
+* Fix parsing of escaped backslashes (issue174, by caseyching).
+* Fix parsing of identifiers starting with underscore (issue175).
 
 Enhancements
 * Improve formatting of HAVING statements.
 * Improve parsing of inline comments (issue163).
 * Group comments to parent object (issue128, issue160).
 * Add double precision builtin (issue169, by darikg).
-* Add support for square bracket array indexing (issue170, by darikg).
+* Add support for square bracket array indexing (issue170, issue176,
+  issue177 by darikg).
 * Improve grouping of aliased elements (issue167, by darikg).
 
 
