@@ -164,10 +164,10 @@ class Lexer(object):
 
     tokens = {
         'root': [
-            (r'--.*?(\r\n|\r|\n)', tokens.Comment.Single),
+            (r'(--|#).*?(\r\n|\r|\n)', tokens.Comment.Single),
             # $ matches *before* newline, therefore we have two patterns
             # to match Comment.Single
-            (r'--.*?$', tokens.Comment.Single),
+            (r'(--|#).*?$', tokens.Comment.Single),
             (r'(\r\n|\r|\n)', tokens.Newline),
             (r'\s+', tokens.Whitespace),
             (r'/\*', tokens.Comment.Multiline, 'multiline-comments'),
